@@ -1,7 +1,7 @@
 
 ## Project Description
 
-This repository contains the code for the low-rank RNN project. In this project, I tried to replicate the following paper: 
+This repository contains the code for the low-rank RNN project as a part of coursework at BCCN Berlin. I tried to replicate the following paper: 
 
 Dubreuil, A., Valente, A., Beiran, M., Mastrogiuseppe, F., & Ostojic, S. (2022). The role of population structure in computations through neural dynamics. Nature Neuroscience, 25(6), 783–794. [https://doi.org/10.1038/s41593-022-01088-4](https://doi.org/10.1038/s41593-022-01088-4)
 
