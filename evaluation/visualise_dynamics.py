@@ -2,7 +2,7 @@ import torch
 import numpy as np
 import matplotlib.pyplot as plt
 
-def plot_hidden_nodes_single_trial_PDM(device, model, t_max, binary_dataset, dataloader):
+def plot_hidden_nodes_single_trial(device, model, t_max, binary_dataset, dataloader):
     sample_batched = next(iter(dataloader))
     _batch_size = len(sample_batched['stimulus'])
     hidden_state_history = np.empty((binary_dataset.num_sample_points, _batch_size,  model.hidden_size))
@@ -21,7 +21,7 @@ def plot_hidden_nodes_single_trial_PDM(device, model, t_max, binary_dataset, dat
     plt.xlim(0, t_max)
     plt.show()
 
-def plot_dynamics_each_trial_PDM(device, model, t_max, binary_dataset, dataloader, num_trial_to_plot=5):
+def plot_dynamics_each_trial(device, model, t_max, binary_dataset, dataloader, num_trial_to_plot=5):
     model.eval()
     with torch.no_grad():
         for i_batch, sample_batched in enumerate(dataloader):
