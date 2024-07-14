@@ -132,8 +132,6 @@ class PWMStimulus(Dataset):
         # initialise the stimulus intensity
         u = np.zeros((self.num_trials, self.num_sample_points))  
         
-        print(self.num_sample_points)
-
         for i_stim in range(self.num_stimuli):
             # convert sec to sample point locations
             t_onset_sample = int(self.t_onsets[i_stim] * self.sampling_rate)
