@@ -12,7 +12,7 @@ The Windows Subsystem for Linux (WSL) with torch-directml. Follow the instructio
 ## Contents 
 
 1. Perceptual Decision Making task (PDM task) \
-    [Jupyternotebook](https://github.com/yotaKawashima/low_rank_RNN/blob/main/perceptual-decision_making.ipynb)
+    [Jupyternotebook](https://github.com/yotaKawashima/low_rank_RNN/blob/main/perceptual_decision_making.ipynb)
 
 2. Parametric Working Memory task (PWM task) \
     [Jupyternotebook](https://github.com/yotaKawashima/low_rank_RNN/blob/main/parametric_working_memory.ipynb)
