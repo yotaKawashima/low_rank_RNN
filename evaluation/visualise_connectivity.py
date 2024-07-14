@@ -39,6 +39,7 @@ def create_list_vector_names(rank):
 
 
 def plot_neurons_connectivity_space(connectivity_data, connectivity_covariance_matrix, rank):
+
     connectivity_data_xaxis, connectivity_data_yaxis, connectivity_covariance_matrix_reordered = \
         reorder_connectivity_matrix(connectivity_data, connectivity_covariance_matrix, rank)
 
@@ -61,7 +62,7 @@ def plot_neurons_connectivity_space(connectivity_data, connectivity_covariance_m
     plt.show()
 
 
-def plot_connectivity_covariance_matrix(connectivity_data, connectivity_covariance_matrix, rank):
+def plot_connectivity_covariance_matrix(connectivity_data, connectivity_covariance_matrix, rank, clim):
     
     _, _, connectivity_covariance_matrix_reordered = \
         reorder_connectivity_matrix(connectivity_data, connectivity_covariance_matrix, rank)
@@ -75,7 +76,7 @@ def plot_connectivity_covariance_matrix(connectivity_data, connectivity_covarian
     cmap = plt.get_cmap('coolwarm')
     cmap.set_bad('white')
     fig, ax = plt.subplots()
-    im = ax.imshow(connectivity_covariance_matrix_reordered, aspect='auto', cmap=cmap, clim=[-2.2, 2.2])
+    im = ax.imshow(connectivity_covariance_matrix_reordered, aspect='auto', cmap=cmap, clim=clim)
     ax.set_xticks(range(len(vector_names_yaxis)), labels=vector_names_yaxis)
     ax.set_yticks(range(len(vector_names_xaxis)), labels=vector_names_xaxis)
     fig.colorbar(im, ax=ax, label='covariance [-]')
