@@ -6,7 +6,7 @@ This repository contains the code for a coursework project at BCCN Berlin. I tri
 Dubreuil, A., Valente, A., Beiran, M., Mastrogiuseppe, F., & Ostojic, S. (2022). The role of population structure in computations through neural dynamics. Nature Neuroscience, 25(6), 783–794. [https://doi.org/10.1038/s41593-022-01088-4](https://doi.org/10.1038/s41593-022-01088-4)
 
 ## Environment 
-The Windows Subsystem for Linux (WSL) with torch-directml. Follow the following instruction for the set-up. [https://learn.microsoft.com/en-us/windows/ai/directml/pytorch-wsl](https://learn.microsoft.com/en-us/windows/ai/directml/pytorch-wsl)
+The Windows Subsystem for Linux (WSL) with torch-directml. Follow the instructions below for the setup. [https://learn.microsoft.com/en-us/windows/ai/directml/pytorch-wsl](https://learn.microsoft.com/en-us/windows/ai/directml/pytorch-wsl)
 
 
 ## Contents 
