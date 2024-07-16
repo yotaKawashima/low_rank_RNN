@@ -71,16 +71,26 @@ class LatentDynamics:
         ks (ndaary): latent variables at a given time (rank, 1)
         input_data (scaler): stimulus at a given time from one trial
         """
-        averaged_neural_gain = self.average_neural_gain(ks, input_data)
-        tilda_sigma_mn = self.tilda_sigma_mn_tentative * averaged_neural_gain
-        tilda_sigma_nI = self.tilda_sigma_mn_tentative * averaged_neural_gain
-
+        # compute derivative
+        derivative_ks, tilda_sigma_mn, tilda_sigma_nI, averaged_neural_gain = \
+            self._derivative_ks(ks, input_data, store_all=True)
+        
         # euler method to compute ks
-        derivative_ks = \
-            (- ks + tilda_sigma_mn @ ks + tilda_sigma_nI @ np.ones(self.rank) * input_data)
         ks = ks + self.time_step_size * derivative_ks
         
         return ks,  tilda_sigma_mn, tilda_sigma_nI, averaged_neural_gain
+
+    def _derivative_ks(self, ks, input_data, store_all=False):
+        averaged_neural_gain = self.average_neural_gain(ks, input_data)
+        tilda_sigma_mn = self.tilda_sigma_mn_tentative * averaged_neural_gain
+        tilda_sigma_nI = self.tilda_sigma_mn_tentative * averaged_neural_gain
+        
+        derivative_ks = (- ks + tilda_sigma_mn @ ks + tilda_sigma_nI @ np.ones(self.rank) * input_data)
+        
+        if store_all:
+            return derivative_ks, tilda_sigma_mn, tilda_sigma_nI, averaged_neural_gain
+        else:
+            return derivative_ks
 
     def phi_prime(self, x):
         """ Neural gain """
@@ -109,3 +119,19 @@ class LatentDynamics:
                                 -np.inf, np.inf, 
                                 args=(ks, v,)) / np.sqrt(2*np.pi)
         return average_data
+
+
+    def energy_function(self, ks, input_data):
+        """ Compute energy function
+        ks (ndaary): latent variables at a given time (rank, 1)
+        input_data (scaler): stimulus at a given time from one trial
+        """
+        derivative_ks = self._derivative_ks(ks, input_data, store_all=False)
+        
+        energy = np.sqrt(np.dot(derivative_ks, derivative_ks))/2
+        
+        return energy.squeeze()
+
+    def minimise_energy(self, initial_ks, input_data):
+        ks_optimised = scipy.optimize.minimize(self.energy_function, initial_ks, args=(input_data,))
+        return ks_optimised

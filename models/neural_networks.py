@@ -5,7 +5,6 @@ from torch import nn
 class LinearAmpFactor(nn.Module):
     def __init__(self, input_size, output_size, init_std):
         super(LinearAmpFactor, self).__init__()
-        # 
         # parameters
         self.input_size = input_size
         self.output_size = output_size
@@ -28,13 +27,12 @@ class LinearAmpFactor(nn.Module):
 class RNNLayer(nn.Module):
     def __init__(self, hidden_size, rank, time_step_size, tau):
         super(RNNLayer, self).__init__()
-        # 
         # parameters
         self.hidden_size = hidden_size
         self.rank = rank
         self.time_step_size = time_step_size
         self.tau = tau
-
+        
         # weight natrix
         self.left_singular_vector = \
             nn.Parameter(torch.normal(0, 1, (hidden_size, rank), dtype=torch.float32))
@@ -72,9 +70,9 @@ class RNNLayer(nn.Module):
 
 # Recurrent Neural Network 
 class LowRankRNN(nn.Module):
-    def __init__(self, input_size, hidden_size, output_size, rank, time_step_size, tau):
+    def __init__(self, input_size, hidden_size, output_size, rank, time_step_size, tau, seed=0):
         super(LowRankRNN, self).__init__()
-        
+        torch.manual_seed(seed)
         # parameters
         self.input_size = input_size
         self.hidden_size = hidden_size
