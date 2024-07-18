@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import torch
 from torch.utils.data import Dataset
+import itertools
 
 class PDMStimulus(Dataset):
     def __init__(self, num_trials, t_onset, t_offset, t_max, u_mean_list, sampling_rate, noise_std = 0.03):
@@ -27,13 +28,15 @@ class PDMStimulus(Dataset):
         self.time = np.linspace(0, self.t_max, self.num_sample_points)
         self.stimuli, self.labels = self.generate_data(noise_std)        
 
-    def generate_data(self, noise_std=0.03):
+    def generate_data(self, noise_std=0.03, systematic_change=False):
         """
         Generate stimulus for each trial
         """
         # mean stimulus intensity for each trial 
-        u_mean = np.random.choice(self.u_mean_list, self.num_trials)
-
+        if systematic_change == False:
+            u_mean = np.random.choice(self.u_mean_list, self.num_trials)
+        else:
+            u_mean = self.u_mean_list
         # noise for each trial N(0, 0.03)
         noise = \
             np.random.normal(0, noise_std, (self.num_trials, self.num_sample_points))
@@ -121,12 +124,16 @@ class PWMStimulus(Dataset):
         self.stimuli, self.labels = self.generate_data()        
         
 
-    def generate_data(self):
+    def generate_data(self, systematic_change=False):
         """
         Generate stimulus for each trial
         """
         # mean stimulus intensity for each trial 
-        f_values = np.random.choice(self.f_list, (len(self.t_onsets), self.num_trials))
+        if systematic_change == False:
+            f_values = np.random.choice(self.f_list, (len(self.t_onsets), self.num_trials))
+        else:
+            f_values = np.array(list(itertools.product(self.f_list, repeat=len(self.t_onsets)))).T
+
 
         u_values = (f_values - (self.f_min + self.f_max)/2) / (self.f_max - self.f_min)
         
