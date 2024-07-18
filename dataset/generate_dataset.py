@@ -35,14 +35,16 @@ class PDMStimulus(Dataset):
         # mean stimulus intensity for each trial 
         if systematic_change == False:
             u_mean = np.random.choice(self.u_mean_list, self.num_trials)
+            num_trials = self.num_trials
         else:
             u_mean = self.u_mean_list
+            num_trials = len(u_mean)
         # noise for each trial N(0, 0.03)
         noise = \
-            np.random.normal(0, noise_std, (self.num_trials, self.num_sample_points))
+            np.random.normal(0, noise_std, (num_trials, self.num_sample_points))
         
         # initialise the stimulus intensity
-        u = np.empty((self.num_trials, self.num_sample_points))  
+        u = np.empty((num_trials, self.num_sample_points))  
 
         # add noise to the stimulus intensity  
         u[:] = noise
@@ -52,7 +54,7 @@ class PDMStimulus(Dataset):
         t_offset_sample = int(self.t_offset * self.sampling_rate) 
         
         # if 5 <= time <=45, then add the mean stimulus intensity
-        if self.num_trials == 1:
+        if num_trials == 1:
             u[0, t_onset_sample:t_offset_sample+1] += np.repeat(u_mean, (t_offset_sample-t_onset_sample+1))
             print(u.shape)
         else:
