@@ -94,16 +94,15 @@ class PDMStimulus(Dataset):
     
 
 class PWMStimulus(Dataset):
-    def __init__(self, num_trials, t_onsets, t_offsets, t_max, f_list, sampling_rate, delays=None):
+    def __init__(self, num_trials, t_onsets, t_offsets, t_max, f_list, sampling_rate):
         """
         Arguments:
             num_trials (int): the number of trials
             t_onsets (np.ndarray): stimulus ramp-up onsets [s] 
             t_offsets (np.ndarray): stimulus ramp-up offsets [s]
-            t_max (float): max time [s]. Make sure to set t_max > t_offsets[-1] + max(delays)
+            t_max (float): max time [s]. Make sure to set t_max > t_offsets[-1]
             f_list (np.ndarray):  a list of stimulus intensity 
             sampling_rate (float): sampling rate [Hz]
-            delays (np.ndarray): delays [s] for curriculum learning
         Return
             u (np.ndarray): the stimulus intensity for each trial
         """
@@ -119,13 +118,6 @@ class PWMStimulus(Dataset):
         self.sampling_rate = sampling_rate # Hz
         self.num_sample_points = int(self.t_max * self.sampling_rate)
         self.time = np.linspace(0, self.t_max, self.num_sample_points)
-        self.delays = delays # for curriculum learning 
-        if self.delays is not None:
-            self.num_trials_for_each_delay = \
-                np.floor(num_trials / delays.shape[0])
-            print("make sure to set num_trials & t_max large enough")
-        else:
-            self.num_trials_for_each_delay = num_trials
         self.stimuli, self.labels = self.generate_data()        
         
 
@@ -145,34 +137,12 @@ class PWMStimulus(Dataset):
             # convert sec to sample point locations
             t_onset_sample = int(self.t_onsets[i_stim] * self.sampling_rate)
             t_offset_sample = int(self.t_offsets[i_stim] * self.sampling_rate) 
-
-            # without delay
-            if (self.delays is None) or (i_stim == 0): 
-                # if t_onset_sample <= time <=t_onset_sample, then add the u_values
-                if self.num_trials == 1:
-                    u[0, t_onset_sample:t_offset_sample+1] = np.repeat(u_values[i_stim], (t_offset_sample-t_onset_sample+1))
-                else:
-                    u[:, t_onset_sample:t_offset_sample+1] = np.tile(u_values[i_stim, :], (t_offset_sample-t_onset_sample+1, 1)).T
-            
-            # with delays
+        
+            # if t_onset_sample <= time <=t_onset_sample, then add the u_values
+            if self.num_trials == 1:
+                u[0, t_onset_sample:t_offset_sample+1] = np.repeat(u_values[i_stim], (t_offset_sample-t_onset_sample+1))
             else:
-                # longer delays for later trials
-                for i_delay in range(self.delays.shape[0]):
-                    delay_sample = int(self.delays[i_delay]* self.sampling_rate)
-                    t_onset_sample_with_delay = \
-                        t_onset_sample + delay_sample
-                    t_offset_sample_with_delay = \
-                         t_offset_sample + delay_sample
-                    first_trial = int(i_delay * self.num_trials_for_each_delay)
-                    last_trial = int((i_delay+1) * self.num_trials_for_each_delay) 
-                    
-                    # the last delay (add the delay up to the final trial)
-                    if i_delay == self.delays.shape[0]-1:
-                        u[first_trial:, t_onset_sample_with_delay:t_offset_sample_with_delay+1] = \
-                            np.tile(u_values[i_stim, first_trial:], (t_offset_sample-t_onset_sample+1, 1)).T
-                    else: # the other delays (add the delay up to the last_trial)  
-                        u[first_trial:last_trial, t_onset_sample_with_delay:t_offset_sample_with_delay+1] = \
-                            np.tile(u_values[i_stim, first_trial:last_trial], (t_offset_sample-t_onset_sample+1, 1)).T
+                u[:, t_onset_sample:t_offset_sample+1] = np.tile(u_values[i_stim, :], (t_offset_sample-t_onset_sample+1, 1)).T
                         
         # obtain label for each trial 
         labels = (f_values[0] - f_values[1]) / (self.f_max - self.f_min)
