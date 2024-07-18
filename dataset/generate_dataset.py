@@ -133,14 +133,15 @@ class PWMStimulus(Dataset):
         # mean stimulus intensity for each trial 
         if systematic_change == False:
             f_values = np.random.choice(self.f_list, (len(self.t_onsets), self.num_trials))
+            num_trials = self.num_trials
         else:
             f_values = np.array(list(itertools.product(self.f_list, repeat=len(self.t_onsets)))).T
-
+            num_trials = f_values.shape[1]
 
         u_values = (f_values - (self.f_min + self.f_max)/2) / (self.f_max - self.f_min)
         
         # initialise the stimulus intensity
-        u = np.zeros((self.num_trials, self.num_sample_points))  
+        u = np.zeros((num_trials, self.num_sample_points))  
 
         for i_stim in range(self.num_stimuli):
             # convert sec to sample point locations
@@ -148,7 +149,7 @@ class PWMStimulus(Dataset):
             t_offset_sample = int(self.t_offsets[i_stim] * self.sampling_rate) 
         
             # if t_onset_sample <= time <=t_onset_sample, then add the u_values
-            if self.num_trials == 1:
+            if num_trials == 1:
                 u[0, t_onset_sample:t_offset_sample+1] = np.repeat(u_values[i_stim], (t_offset_sample-t_onset_sample+1))
             else:
                 u[:, t_onset_sample:t_offset_sample+1] = np.tile(u_values[i_stim, :], (t_offset_sample-t_onset_sample+1, 1)).T
